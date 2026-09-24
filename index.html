@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hella Sage: side projects</title>
+<meta name="description" content="Side projects and experiments by Sage. Quizzes, small tools, and whatever's next.">
+<meta property="og:title" content="Hella Sage: side projects">
+<meta property="og:description" content="Side projects and experiments by Sage.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%232a3a74'/><text x='16' y='23' font-family='Arial' font-weight='700' font-size='20' text-anchor='middle' fill='%23f3ecdc'>S</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#e4e8ea;        /* overcast sky */
+    --ink:#1b2029;
+    --muted:#59626e;
+    --felt:#2a3a74;      /* blue felt */
+    --letter:#f3ecdc;    /* plastic peg letters */
+    --oak:#b3875a;
+    --marigold:#e8a917;
+    --status:#8a5a00;    /* marigold dark enough to read as text on light */
+    --font:'Archivo',system-ui,-apple-system,'Segoe UI',sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#15181d;
+      --ink:#e7e9ec;
+      --muted:#9aa1ab;
+      --status:#f0bd45;
+    }
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.55;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-underline-offset:3px;text-decoration-thickness:1px}
+  a:hover{color:var(--status)}
+  :focus-visible{outline:2px solid var(--marigold);outline-offset:3px;border-radius:2px}
+  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+  .page{max-width:880px;margin:0 auto;padding:clamp(24px,6vw,64px) clamp(16px,5vw,32px) 48px}
+
+  /* ---- the letterboard ---- */
+  .board{
+    border:clamp(10px,2vw,16px) solid var(--oak);
+    border-radius:3px;
+    box-shadow:inset 0 0 0 1px rgba(0,0,0,.25), 0 18px 40px -20px rgba(0,0,0,.45);
+    background:
+      repeating-linear-gradient(to bottom,transparent 0 6px,rgba(0,0,0,.2) 6px 7px,rgba(255,255,255,.05) 7px 8px),
+      var(--felt);
+    padding:clamp(18px,4vw,40px) clamp(8px,2vw,24px);
+    container-type:inline-size;
+  }
+  .row{
+    display:flex;justify-content:center;
+    font-weight:650;font-stretch:78%;
+    font-size:min(3.2rem, calc(100cqi / 12.2));
+    line-height:1.4;color:var(--letter);
+    text-shadow:0 1px 0 rgba(0,0,0,.4);
+  }
+  .ch{
+    display:inline-block;width:.8em;text-align:center;
+    transform:translateY(var(--y)) rotate(var(--rot));
+    transition:opacity .12s ease,transform .12s ease;
+  }
+  .ch.out{opacity:0;transform:translateY(calc(var(--y) - .3em)) rotate(var(--rot))}
+
+  .intro{margin:clamp(28px,5vw,44px) 0 8px;font-size:clamp(17px,2.2vw,19px);max-width:58ch}
+  .intro a{white-space:nowrap}
+  .hint{color:var(--muted);font-size:14px}
+
+  /* ---- project list ---- */
+  .projects{list-style:none;margin-top:clamp(28px,5vw,44px);display:flex;flex-direction:column;gap:6px}
+  .proj{
+    display:grid;grid-template-columns:1fr auto;gap:4px 24px;
+    padding:18px 16px;margin:0 -16px;border-radius:4px;
+    transition:background-color .15s;
+  }
+  .proj:hover,.proj:focus-within{background:color-mix(in srgb,var(--felt) 9%,transparent)}
+  .proj h2{font-size:clamp(22px,3.4vw,28px);font-weight:700;font-stretch:88%;letter-spacing:-.01em;line-height:1.15}
+  .proj p{grid-column:1/-1;color:var(--muted);max-width:60ch}
+  .status{font-size:14px;color:var(--status);display:flex;align-items:center;gap:7px;align-self:center;white-space:nowrap}
+  .status::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--marigold)}
+  .status.quiet{color:var(--muted)}
+  .status.quiet::before{background:transparent;border:1.5px solid currentColor}
+  .links{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px 20px;margin-top:6px;font-size:15px;font-weight:500}
+  .proj.soon{border:1.5px dashed color-mix(in srgb,var(--muted) 50%,transparent);margin:10px 0 0;padding:18px 16px}
+  .proj.soon h2{color:var(--muted)}
+
+  footer{margin-top:clamp(48px,8vw,80px);color:var(--muted);font-size:14px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px 24px}
+  footer nav{display:flex;flex-wrap:wrap;gap:6px 20px}
+
+  @media (prefers-reduced-motion:reduce){
+    .ch,.proj{transition:none}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <h1 class="sr-only">Hella Sage: side projects and other tinkering</h1>
+    <!-- Default board text. Each line max 15 characters, separated by | -->
+    <div class="board" aria-hidden="true" data-board="HELLA SAGE|SIDE PROJECTS &|OTHER TINKERING">
+      <div class="row"></div>
+      <div class="row"></div>
+      <div class="row"></div>
+    </div>
+  </header>
+
+  <main>
+    <p class="intro">Stuff I make for fun, mostly after work. The résumé version of me lives at <a href="https://sejulphanord.com">sejulphanord.com</a>.</p>
+    <p class="hint">Point at a project and the board changes.</p>
+
+    <!--
+      To add a project: copy an <li class="proj"> block.
+      data-board = three lines for the letterboard, each 15 characters or fewer.
+      Status: plain "status" for live things, "status quiet" for anything not public.
+    -->
+    <ul class="projects">
+
+      <li class="proj" data-board="CLOSE ENOUGH|HOW PERSONAL?|HOW TOUCHY?">
+        <h2>Close Enough</h2>
+        <span class="status">Live</span>
+        <p>A 20-question quiz that plots how personal and how touchy you are, from family all the way out to strangers. The scoring math is public if you want to check it.</p>
+        <div class="links">
+          <a href="/close-enough/">Take the quiz</a>
+          <a href="https://github.com/sagewiz/close-enough">Code on GitHub</a>
+        </div>
+      </li>
+
+      <li class="proj" data-board="CAFECITO|WHO'S IN FOR|A COFFEE RUN?">
+        <h2>Cafecito</h2>
+        <span class="status quiet">Office only</span>
+        <p>A Power Platform vote for rounding up the after-lunch Cuban coffee run. Lives inside work, so there's nothing to click here.</p>
+      </li>
+
+      <li class="proj soon" data-board="COMING SOON|SOMETHING'S|BREWING">
+        <h2>Next one</h2>
+        <span class="status quiet">In the works</span>
+        <p>This spot's saved for whatever I build next.</p>
+      </li>
+
+    </ul>
+  </main>
+
+  <footer>
+    <span>Made by Sage in South Florida</span>
+    <nav aria-label="Elsewhere">
+      <a href="https://www.instagram.com/hellasage/">Instagram</a>
+      <a href="https://github.com/sagewiz">GitHub</a>
+      <a href="https://sejulphanord.com">sejulphanord.com</a>
+    </nav>
+  </footer>
+
+</div>
+
+<script>
+  const LEN = 15;
+  const board = document.querySelector('.board');
+  const rows = [...board.querySelectorAll('.row')];
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const defaultLines = board.dataset.board.split('|');
+  let timers = [];
+
+  // Center each line inside a fixed number of slots so letters swap in place.
+  function pad(s){
+    s = s.toUpperCase().slice(0, LEN);
+    const left = Math.floor((LEN - s.length) / 2);
+    return ' '.repeat(left) + s + ' '.repeat(LEN - s.length - left);
+  }
+
+  // Build the slots. Each one gets a small fixed tilt, like hand-placed peg letters.
+  rows.forEach((row, r) => {
+    for (let i = 0; i < LEN; i++){
+      const slot = document.createElement('span');
+      slot.className = 'ch';
+      slot.style.setProperty('--rot', (((i * 37 + r * 53) % 9) - 4) * 0.7 + 'deg');
+      slot.style.setProperty('--y', (((i * 29 + r * 17) % 5) - 2) * 0.6 + 'px');
+      row.appendChild(slot);
+    }
+  });
+
+  function show(lines){
+    // Finish any swap that was mid-flight before starting a new one.
+    timers.forEach(clearTimeout);
+    timers = [];
+    rows.forEach(row => [...row.children].forEach(slot => {
+      slot.classList.remove('out');
+      slot.textContent = (slot.dataset.c || '').trim();
+    }));
+
+    let n = 0;
+    rows.forEach((row, r) => {
+      const text = pad(lines[r] || '');
+      [...row.children].forEach((slot, i) => {
+        const c = text[i];
+        if (slot.dataset.c === c) return;
+        slot.dataset.c = c;
+        if (reduce.matches){ slot.textContent = c.trim(); return; }
+        const delay = n++ * 14;
+        timers.push(setTimeout(() => {
+          slot.classList.add('out');
+          timers.push(setTimeout(() => {
+            slot.textContent = c.trim();
+            slot.classList.remove('out');
+          }, 120));
+        }, delay));
+      });
+    });
+  }
+
+  let leaveTimer;
+  document.querySelectorAll('.proj[data-board]').forEach(el => {
+    const lines = el.dataset.board.split('|');
+    const on = () => { clearTimeout(leaveTimer); show(lines); };
+    const off = () => { leaveTimer = setTimeout(() => show(defaultLines), 250); };
+    el.addEventListener('mouseenter', on);
+    el.addEventListener('focusin', on);
+    el.addEventListener('mouseleave', off);
+    el.addEventListener('focusout', off);
+  });
+
+  show(defaultLines);
+</script>
+</body>
+</html>
